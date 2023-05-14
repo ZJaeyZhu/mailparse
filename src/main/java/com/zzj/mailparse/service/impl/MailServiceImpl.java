@@ -2,6 +2,7 @@ package com.zzj.mailparse.service.impl;
 
 import com.zzj.mailparse.model.RespEnum;
 import com.zzj.mailparse.service.MailService;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,16 +20,10 @@ import java.util.zip.ZipOutputStream;
 public class MailServiceImpl implements MailService {
 
     //同名文件夹创建路径
-    private static final String FRONT_DIRECTORY_PATH = "src/main/resources/static/";
-
+    private static final String FRONT_DIRECTORY_PATH = "src/main/resources/static/creatdirectories/";
 
     private Logger Log = LoggerFactory.getLogger(MailServiceImpl.class);
 
-    //测试用
-//    @Override
-//    public String createPackage(MultipartFile file) {
-//        return file.getOriginalFilename();
-//    }
 
     /*
      * 根据上传文件创建同名文件夹，返回文件夹地址
@@ -76,12 +71,14 @@ public class MailServiceImpl implements MailService {
             ops = response.getOutputStream();
             response.setHeader("Content-Disposition","attachment;fileName="+
                     URLEncoder.encode(filePcg.getName()+".zip","UTF-8"));
-                   // filePcg.getName()+".zip");
             zops = new ZipOutputStream(ops);
             compress(filePcg,zops,filePcg.getName());//压缩文件夹的方法
             //刷新流
             zops.flush();
             Log.info("文件夹压缩成功，请查收");
+            //删除项目中的文件夹
+            deleteDir(filePcg);
+            Log.info("文件夹:"+filePcg.getName()+"已删除");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,8 +102,7 @@ public class MailServiceImpl implements MailService {
 
     }
 
-
-    //压缩文件夹方法
+    //压缩文件夹及其中文件
     private void compress(File sourceFile , ZipOutputStream zops , String name) throws IOException {
         byte[] bytes = new byte[1024];
         if(sourceFile.isFile()){
@@ -139,8 +135,8 @@ public class MailServiceImpl implements MailService {
     }
 
     //删除文件夹
-    private void deleteDir(){
-
+    private void deleteDir(File file) throws IOException {
+        FileUtils.deleteDirectory(file);
     }
 
 }

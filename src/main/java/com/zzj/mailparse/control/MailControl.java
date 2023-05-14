@@ -26,15 +26,6 @@ public class MailControl {
     @Autowired
     private MailService mailService;
 
-    //测试用
-//    @GetMapping("/start")
-//    public String startPage(HttpServletRequest request, HttpServletResponse response){
-//        File filePcg = new File("F:\\工作\\mailparse");
-//        //mailService.directoryToZip(filePcg.getName(),filePcg);
-//        mailService.zipPackage(filePcg,request,response);
-//        return "mailparse";
-//    }
-
     /*
        初始页
      */
@@ -58,6 +49,7 @@ public class MailControl {
         File filePcg = new File(directoryPath);
 
         //2、解析邮件，将附件邮件存入该文件夹中
+
 
         //3、压缩该文件夹并返回前端
         mailService.zipPackage(filePcg,request,response);
